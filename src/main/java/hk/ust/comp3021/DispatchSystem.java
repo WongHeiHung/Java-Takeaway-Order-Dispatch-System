@@ -1,8 +1,14 @@
 package hk.ust.comp3021;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DispatchSystem {
 
@@ -76,6 +82,39 @@ public class DispatchSystem {
                 }
 
                 String accountType = fields[1];
+                Long id = Long.valueOf(fields[0]);
+                String name = fields[2];
+                String contactNumber = fields[3];
+                List<Double> location = Arrays.stream(fields[4].replaceAll("[\\[\\]]", "").trim()
+                                .split("\\s+"))
+                                .map(Double::parseDouble)
+                                .toList();
+
+                switch (accountType) {
+                    case "CUSTOMER":
+                        Integer CustomerType = Integer.valueOf(fields[5]);
+                        String Gender = fields[6];
+                        String Email = fields[7];
+                        Customer newCustomer = new Customer(id,accountType,name,contactNumber,location,CustomerType,Gender,Email);
+                        Account.getAccountManager().addCustomer(newCustomer);
+                        break;
+                    case "RESTAURANT":
+                        String District = fields[5];
+                        String Street = fields[6];
+                        Restaurant newRestaurant = new Restaurant(id,accountType,name,contactNumber,location,District,Street);
+                        Account.getAccountManager().addRestaurant(newRestaurant);
+                        break;
+                    case "RIDER":
+                        String RIDER_Gender = fields[5];
+                        Integer Status = Integer.valueOf(fields[6]);
+                        Double UserRating = Double.valueOf(fields[7]);
+                        Integer MonthTaskCount = Integer.valueOf(fields[8]);
+                        Rider newRider = new Rider(id,accountType,name,contactNumber,location,RIDER_Gender,Status,UserRating,MonthTaskCount);
+                        Account.getAccountManager().addRider(newRider);
+                        break;
+                    default:
+                        continue;
+                }
 
                 // TODO.
 
@@ -98,7 +137,14 @@ public class DispatchSystem {
                 for (int i = 0; i < fields.length; i++) {
                     fields[i] = fields[i].trim();
                 }
+                Long id = Long.valueOf(fields[0]);
+                String Name = fields[1];
+                String Desc = fields[2];
+                BigDecimal Price = new BigDecimal(fields[3]);
+                Long RestaurantId = Long.valueOf(fields[4]);
 
+                Dish newDish = new Dish(id,Name,Desc,Price,RestaurantId);
+                Account.getAccountManager().getRestaurantById(RestaurantId).addDish(newDish);
                 // TODO.
 
             }

@@ -9,6 +9,14 @@ public class Dish {
     private BigDecimal price;
     private Long restaurantId;
 
+    public Dish(Long id, String name, String desc, BigDecimal price, Long restaurantId) {
+        this.id = id;
+        this.name = name;
+        this.desc = desc;
+        this.price = price;
+        this.restaurantId = restaurantId;
+    }
+
     public Long getId() {
         return id;
     }
