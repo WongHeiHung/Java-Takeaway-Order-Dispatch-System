@@ -12,4 +12,12 @@ public class Location {
         //Get the distance between two location
         return Math.sqrt(Math.pow(this.altitude- other.altitude,2)+Math.pow(this.latitude- other.latitude,2));
     }
+
+    @Override
+    public String toString() {
+        return "Location(" +
+                "latitude=" + latitude +
+                ", altitude=" + altitude +
+                ')';
+    }
 }
