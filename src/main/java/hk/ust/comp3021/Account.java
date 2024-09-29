@@ -1,5 +1,6 @@
 package hk.ust.comp3021;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Account {
@@ -52,7 +53,12 @@ public abstract class Account {
 
         /// Hint: Do not forget to add the account to the registeredAccounts list.
         public void addCustomer(Customer customer) {
+            if (registeredAccounts == null)
+                registeredAccounts = new ArrayList<>();
             registeredAccounts.add(customer);
+
+            if (registeredCustomers == null)
+                registeredCustomers = new ArrayList<>();
             registeredCustomers.add(customer);
         }
 
@@ -67,7 +73,12 @@ public abstract class Account {
 
         /// Hint: Do not forget to add the account to the registeredAccounts list.
         public void addRestaurant(Restaurant restaurant) {
+            if (registeredAccounts == null)
+                registeredAccounts = new ArrayList<>();
             registeredAccounts.add(restaurant);
+
+            if (registeredRestaurants == null)
+                registeredRestaurants = new ArrayList<>();
             registeredRestaurants.add(restaurant);
         }
 
@@ -82,7 +93,12 @@ public abstract class Account {
 
         /// Hint: Do not forget to add the account to the registeredAccounts list.
         public void addRider(Rider rider) {
+            if (registeredAccounts == null)
+                registeredAccounts = new ArrayList<>();
             registeredAccounts.add(rider);
+
+            if (registeredRiders == null)
+                registeredRiders = new ArrayList<>();
             registeredRiders.add(rider);
         }
 

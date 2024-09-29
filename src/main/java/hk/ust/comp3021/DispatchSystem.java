@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+
 public class DispatchSystem {
 
     /// The singleton you will use in the project.
@@ -32,7 +33,6 @@ public class DispatchSystem {
 
     private DispatchSystem() {
         if(dispatchSystem == null) {
-            dispatchSystem = new DispatchSystem();
             this.availableDishes = new ArrayList<Dish>();
             this.availableOrders = new ArrayList<Order>();
             this.dispatchedOrders = new ArrayList<Order>();
@@ -51,7 +51,7 @@ public class DispatchSystem {
     }
 
     public Dish getDishById(Long id) {
-        for(Dish dish : this.getDishes()){
+        for(Dish dish : availableDishes){
             if(Objects.equals(dish.getId(), id))
                 return dish;
         }
@@ -59,6 +59,13 @@ public class DispatchSystem {
     }
 
     public Boolean checkDishesInRestaurant(Restaurant restaurant, Long[] dishIds) {
+        for (Long dishId : dishIds) {
+            Dish dish = getDishById(dishId);
+            if (dish == null || !dish.getRestaurantId().equals(restaurant.getId())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /// Task 2: Implement the parseAccounts() method to parse the accounts from the file.
@@ -145,6 +152,7 @@ public class DispatchSystem {
 
                 Dish newDish = new Dish(id,Name,Desc,Price,RestaurantId);
                 Account.getAccountManager().getRestaurantById(RestaurantId).addDish(newDish);
+                availableDishes.add(newDish);
                 // TODO.
 
             }
@@ -167,12 +175,52 @@ public class DispatchSystem {
                     fields[i] = fields[i].trim();
                 }
 
+                Long id = Long.valueOf(fields[0]);
+                Integer status = Integer.valueOf(fields[1]);
+                Long restaurantId = Long.valueOf(fields[2]);
+                Restaurant restaurant = Account.getAccountManager().getRestaurantById(restaurantId);
+
+                Long customerId = Long.valueOf(fields[3]);
+                Customer customer = Account.getAccountManager().getCustomerById(customerId);
+
+                Long CreateTime = Long.valueOf(fields[4]);
+                Integer isPayed = Integer.valueOf(fields[5]);
+                Boolean booleanIsPayed = isPayed != 0;
+
+                List<Long> orderedDishes = Arrays.stream(fields[6].replaceAll("[\\[\\]]", "").trim()
+                                .split("\\s+"))
+                        .map(Long::parseLong)
+                        .toList();
+
+                List<Dish> dishes = new ArrayList<>();
+                for (Long dishId : orderedDishes) {
+                    Dish dish = getDishById(dishId);
+                    if (dish != null) {
+                        dishes.add(dish);
+                    }
+                }
+
+                Long[] array = new Long[orderedDishes.size()];
+                for (int i = 0; i < orderedDishes.size(); i++)
+                    array[i] = orderedDishes.get(i);
+
+                Rider rider;
+                if(Objects.equals(fields[7], "NA")){
+                    rider = null;
+                }
+                else {
+                    Long riderId = Long.valueOf(fields[7]);
+                    rider = Account.getAccountManager().getRiderById(riderId);
+                }
+                Order newOrder = new Order(id, status, restaurant, customer, CreateTime, booleanIsPayed, dishes, rider);
+                if(checkDishesInRestaurant(restaurant,array))
+                    availableOrders.add(newOrder);
                 // TODO.
 
             }
         }
     }
-
+/*
     /// Task 5: Implement the getAvailablePendingOrders() method to get the available pending orders.
     /// Hint: The available pending orders should have the status of PENDING_ORDER, is payed, and the rider is null.
     public List<Order> getAvailablePendingOrders() {
@@ -258,7 +306,7 @@ public class DispatchSystem {
     /// Hint: Do not forget to take the current time stamp into consideration.
     public List<Order> getTimeoutDispatchedOrders() {
     }
-
+*/
     /// Do not modify the method.
     public List<Order> getAvailableOrders() {
         return availableOrders;
@@ -283,18 +331,21 @@ public class DispatchSystem {
     /// Finish the main method to test your implementation.a
     public static void main(String[] args) {
         try {
-            .parseAccounts("Accounts.txt");
-            .parseDishes("Dishes.txt");
-            .parseOrders("Orders.txt");
-            .writeOrders("availableOrders.txt", .availableOrders);
+            DispatchSystem dispatchSystem = getInstance();
+            Account.AccountManager am = Account.getAccountManager();
+            dispatchSystem.parseAccounts("SampleInputAccounts.txt");
+            dispatchSystem.parseDishes("SampleInputDishes.txt");
+            dispatchSystem.parseOrders("SampleInputOrders.txt");
+            /*
+            dispatchSystem.writeOrders("availableOrders.txt", dispatchSystem.availableOrders);
 
-            .dispatchFirstRound();
+            dispatchSystem.dispatchFirstRound();
 
-            .writeOrders("firstRoundDispatchedOrders.txt", .dispatchedOrders);
-            List<Order> timeoutOrders = .getTimeoutDispatchedOrders();
+            dispatchSystem.writeOrders("firstRoundDispatchedOrders.txt", dispatchSystem.dispatchedOrders);
+            List<Order> timeoutOrders = dispatchSystem.getTimeoutDispatchedOrders();
 
-            .writeOrders("timeoutDispatchedOrders.txt", timeoutOrders);
-
+            dispatchSystem.writeOrders("timeoutDispatchedOrders.txt", timeoutOrders);
+*/
         } catch (IOException exception) {
             exception.printStackTrace();
         }
