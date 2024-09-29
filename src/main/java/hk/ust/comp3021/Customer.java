@@ -24,6 +24,18 @@ public class Customer extends Account{
         return accountManager.getCustomerById(id);
     }
 
+    public Integer getCustomerType() {
+        return customerType;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
     /// Do not modify this method.
     @Override
     public String toString() {

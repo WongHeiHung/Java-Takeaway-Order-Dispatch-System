@@ -24,6 +24,23 @@ public class Rider extends Account{
         //Get account from manager
         return accountManager.getRiderById(id);
     }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public Double getUserRating() {
+        return userRating;
+    }
+
+    public Integer getMonthTaskCount() {
+        return monthTaskCount;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
     /// Do not modify this method.
     @Override
     public String toString() {

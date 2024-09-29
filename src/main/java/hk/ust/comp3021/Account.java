@@ -23,6 +23,26 @@ public abstract class Account {
         this.location = new Location(location.get(0),location.get(1));
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public String getAccountType() {
+        return accountType;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
     /// This is where the registered accounts are stored.
     protected static class AccountManager {
 
@@ -40,6 +60,18 @@ public abstract class Account {
         /// Do not modify this method.
         public List<Account> getRegisteredAccounts() {
             return registeredAccounts;
+        }
+
+        public List<Customer> getRegisteredCustomers() {
+            return registeredCustomers;
+        }
+
+        public List<Restaurant> getRegisteredRestaurants() {
+            return registeredRestaurants;
+        }
+
+        public List<Rider> getRegisteredRiders() {
+            return registeredRiders;
         }
 
         public Account getAccountById(Long id) {

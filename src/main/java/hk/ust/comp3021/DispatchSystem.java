@@ -1,13 +1,8 @@
 package hk.ust.comp3021;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -220,26 +215,55 @@ public class DispatchSystem {
             }
         }
     }
-/*
+
     /// Task 5: Implement the getAvailablePendingOrders() method to get the available pending orders.
     /// Hint: The available pending orders should have the status of PENDING_ORDER, is payed, and the rider is null.
     public List<Order> getAvailablePendingOrders() {
+        List<Order> availablePendingOrders = new ArrayList<>();
+        for (Order order : availableOrders) {
+            if (Objects.equals(order.getStatus(), Constants.PENDING_ORDER)) {
+                availablePendingOrders.add(order);
+            }
+        }
+        return availablePendingOrders;
     }
 
     /// Task 6: Implement the getRankedPendingOrders() method to rank the pending orders.
     /// Hint: Use the comparators you defined before, and sort the pending orders in order of the customer type (Top priority), order creation time (Second priority), and restaurant to customer distance (Least priority).
     public List<Order> getRankedPendingOrders(List<Order> pendingOrders) {
+        List<Order> rankedOrders = new ArrayList<>(pendingOrders);
+
+        for (int i = 0; i < rankedOrders.size(); i++) {
+            for (int j = i + 1; j < rankedOrders.size(); j++) {
+                if (CustomerPriorityRank.customerpriorityrank.compare(rankedOrders.get(i), rankedOrders.get(j)) == 0)
+                    if (OrderCreateTimeRank.ordercreatetimerank.compare(rankedOrders.get(i), rankedOrders.get(j)) == 0)
+                        if (RestaurantToCustomerDistanceRank.restauranttocustomerdistancerank.compare(rankedOrders.get(i), rankedOrders.get(j)) == 0){
+                            Order temp = rankedOrders.get(i);
+                            rankedOrders.set(i, rankedOrders.get(j));
+                            rankedOrders.set(j, temp);
+                        }
+            }
+        }
+        return rankedOrders;
     }
 
     /// Task 7: Implement the getAvailableRiders() method to get the available riders to dispatch.
     /// Hint: The available riders should have the status of RIDER_ONLINE_ORDER.
     public List<Rider> getAvailableRiders() {
+        List<Rider> availableRiders = new ArrayList<>();
+        for (Rider rider : Account.getAccountManager().getRegisteredRiders()) {
+            if (Objects.equals(rider.getStatus(), Constants.RIDER_ONLINE_ORDER)) {
+                availableRiders.add(rider);
+            }
+        }
+        return availableRiders;
     }
 
     /// Task 8: Implement the matchTheBestTask() method to choose the best rider for the order.
     /// Hint: The best rider should have the highest rank ranked in order of the distance between the rider and the restaurant (Top priority), the rider's user rating (Second priority), and the rider's month task count (Least priority).
     /// Use the comparators you defined before, you will also use the Task class here and the availableRiders here should be the currently available riders.
     public Task matchTheBestTask(Order order, List<Rider> availableRiders) {
+        return null;
     }
 
     /// Task 9: Implement the dispatchFirstRound() method to dispatch the first round of orders.
@@ -305,8 +329,9 @@ public class DispatchSystem {
     /// Task 10: Implement the getTimeoutDispatchedOrders() method to get the timeout dispatched orders.
     /// Hint: Do not forget to take the current time stamp into consideration.
     public List<Order> getTimeoutDispatchedOrders() {
+        return null;
     }
-*/
+
     /// Do not modify the method.
     public List<Order> getAvailableOrders() {
         return availableOrders;
@@ -332,13 +357,11 @@ public class DispatchSystem {
     public static void main(String[] args) {
         try {
             DispatchSystem dispatchSystem = getInstance();
-            Account.AccountManager am = Account.getAccountManager();
             dispatchSystem.parseAccounts("SampleInputAccounts.txt");
             dispatchSystem.parseDishes("SampleInputDishes.txt");
             dispatchSystem.parseOrders("SampleInputOrders.txt");
-            /*
             dispatchSystem.writeOrders("availableOrders.txt", dispatchSystem.availableOrders);
-
+/*
             dispatchSystem.dispatchFirstRound();
 
             dispatchSystem.writeOrders("firstRoundDispatchedOrders.txt", dispatchSystem.dispatchedOrders);
