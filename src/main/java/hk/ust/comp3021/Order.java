@@ -57,6 +57,19 @@ public class Order {
     public Double getEstimatedTime() {
         return estimatedTime;
     }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public void setRider(Rider rider) {
+        this.rider = rider;
+    }
+
+    public void setEstimatedTime(Double estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
     public Double calculateEstimatedTime(){
         //For Task9
         return 0.0;

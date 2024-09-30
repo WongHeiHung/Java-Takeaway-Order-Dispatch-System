@@ -1,6 +1,19 @@
 package hk.ust.comp3021;
 
 public class Task {
-    public Order order;
-    public Rider rider;
+    private Order order;
+    private Rider rider;
+
+    Task(Order order, Rider rider){
+        this.order = order;
+        this.rider = rider;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public Rider getRider() {
+        return rider;
+    }
 }

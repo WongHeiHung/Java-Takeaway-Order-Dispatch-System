@@ -263,13 +263,44 @@ public class DispatchSystem {
     /// Hint: The best rider should have the highest rank ranked in order of the distance between the rider and the restaurant (Top priority), the rider's user rating (Second priority), and the rider's month task count (Least priority).
     /// Use the comparators you defined before, you will also use the Task class here and the availableRiders here should be the currently available riders.
     public Task matchTheBestTask(Order order, List<Rider> availableRiders) {
-        return null;
+        Task bestTask = new Task(order, availableRiders.get(0));
+        for(Rider rider : availableRiders){
+            Task newTask = new Task(order, rider);
+            if(RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) == 0)
+                if(RiderRatingRank.riderRatingRank.compare(bestTask,newTask) == 0)
+                    if(RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) == 0)
+                        bestTask = newTask;
+        }
+        return bestTask;
     }
 
     /// Task 9: Implement the dispatchFirstRound() method to dispatch the first round of orders.
     /// Hint: The strategy is that we assign the best rider to the orders ranked one by one until the orders or riders list is empty.
     /// Do not forget to 1. remove the dispatched rider every iteration, 2. change the status of the order and the rider after the order is dispatched, and 3. calculate the estimated time for the order.
     public void dispatchFirstRound() {
+        while(true){
+            List<Order> aviliableOrder = getAvailablePendingOrders();
+            if (aviliableOrder.isEmpty()) return;
+            List<Order> rankedOrder = getRankedPendingOrders(aviliableOrder);
+            List<Rider> aviliableRider = getAvailableRiders();
+            if (aviliableRider.isEmpty()) return;
+
+            Task BestTask = matchTheBestTask(rankedOrder.get(0),aviliableRider);
+            BestTask.getOrder().setStatus(Constants.DISPATCHED_ORDER);
+            BestTask.getOrder().setRider(BestTask.getRider());
+
+            Location restaurantLocation = BestTask.getOrder().getRestaurant().getLocation();
+            Location riderLocation = BestTask.getRider().getLocation();
+            Double distance = restaurantLocation.distanceTo(riderLocation);
+            Double time = distance/Constants.DELIVERY_SPEED;
+            BestTask.getOrder().setEstimatedTime(time);
+
+            BestTask.getRider().setStatus(Constants.RIDER_DELIVERING);
+
+            dispatchedOrders.add(BestTask.getOrder());
+
+
+        }
     }
 
     /// Do not modify the method. You should use the method to output orders for us to check the correctness of your implementation.
@@ -361,10 +392,11 @@ public class DispatchSystem {
             dispatchSystem.parseDishes("SampleInputDishes.txt");
             dispatchSystem.parseOrders("SampleInputOrders.txt");
             dispatchSystem.writeOrders("availableOrders.txt", dispatchSystem.availableOrders);
-/*
+
             dispatchSystem.dispatchFirstRound();
 
             dispatchSystem.writeOrders("firstRoundDispatchedOrders.txt", dispatchSystem.dispatchedOrders);
+            /*
             List<Order> timeoutOrders = dispatchSystem.getTimeoutDispatchedOrders();
 
             dispatchSystem.writeOrders("timeoutDispatchedOrders.txt", timeoutOrders);

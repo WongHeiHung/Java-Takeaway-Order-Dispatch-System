@@ -41,6 +41,10 @@ public class Rider extends Account{
         return status;
     }
 
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     /// Do not modify this method.
     @Override
     public String toString() {
