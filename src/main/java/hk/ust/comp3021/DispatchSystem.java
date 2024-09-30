@@ -222,7 +222,8 @@ public class DispatchSystem {
         List<Order> availablePendingOrders = new ArrayList<>();
         for (Order order : availableOrders) {
             if (Objects.equals(order.getStatus(), Constants.PENDING_ORDER)) {
-                availablePendingOrders.add(order);
+                if(order.getIsPayed())
+                    availablePendingOrders.add(order);
             }
         }
         return availablePendingOrders;
@@ -235,13 +236,32 @@ public class DispatchSystem {
 
         for (int i = 0; i < rankedOrders.size(); i++) {
             for (int j = i + 1; j < rankedOrders.size(); j++) {
-                if (CustomerPriorityRank.customerpriorityrank.compare(rankedOrders.get(i), rankedOrders.get(j)) == 0)
-                    if (OrderCreateTimeRank.ordercreatetimerank.compare(rankedOrders.get(i), rankedOrders.get(j)) == 0)
-                        if (RestaurantToCustomerDistanceRank.restauranttocustomerdistancerank.compare(rankedOrders.get(i), rankedOrders.get(j)) == 0){
-                            Order temp = rankedOrders.get(i);
-                            rankedOrders.set(i, rankedOrders.get(j));
-                            rankedOrders.set(j, temp);
-                        }
+                if(CustomerPriorityRank.customerpriorityrank.compare(rankedOrders.get(i), rankedOrders.get(j)) > 0)
+                    continue;
+                else if (CustomerPriorityRank.customerpriorityrank.compare(rankedOrders.get(i), rankedOrders.get(j)) < 0) {
+                    Order temp = rankedOrders.get(i);
+                    rankedOrders.set(i, rankedOrders.get(j));
+                    rankedOrders.set(j, temp);
+                    continue;
+                }
+
+                if(OrderCreateTimeRank.ordercreatetimerank.compare(rankedOrders.get(i), rankedOrders.get(j)) >  0)
+                    continue;
+                else if (OrderCreateTimeRank.ordercreatetimerank.compare(rankedOrders.get(i), rankedOrders.get(j)) < 0){
+                    Order temp = rankedOrders.get(i);
+                    rankedOrders.set(i, rankedOrders.get(j));
+                    rankedOrders.set(j, temp);
+                    continue;
+                }
+
+                if(RestaurantToCustomerDistanceRank.restauranttocustomerdistancerank.compare(rankedOrders.get(i), rankedOrders.get(j)) > 0)
+                    continue;
+                else if (RestaurantToCustomerDistanceRank.restauranttocustomerdistancerank.compare(rankedOrders.get(i), rankedOrders.get(j)) < 0){
+                    Order temp = rankedOrders.get(i);
+                    rankedOrders.set(i, rankedOrders.get(j));
+                    rankedOrders.set(j, temp);
+                    continue;
+                }
             }
         }
         return rankedOrders;
@@ -266,10 +286,26 @@ public class DispatchSystem {
         Task bestTask = new Task(order, availableRiders.get(0));
         for(Rider rider : availableRiders){
             Task newTask = new Task(order, rider);
-            if(RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) == 0)
-                if(RiderRatingRank.riderRatingRank.compare(bestTask,newTask) == 0)
-                    if(RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) == 0)
-                        bestTask = newTask;
+            if(RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) > 0)
+                continue;
+            else if (RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) < 0) {
+                bestTask = newTask;
+                continue;
+            }
+
+            if(RiderRatingRank.riderRatingRank.compare(bestTask,newTask) >  0)
+                continue;
+            else if (RiderRatingRank.riderRatingRank.compare(bestTask,newTask) < 0){
+                bestTask = newTask;
+                continue;
+            }
+
+            if(RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) > 0)
+                continue;
+            else if (RiderToRestaurantRank.riderToRestaurantRank.compare(bestTask,newTask) < 0){
+                bestTask = newTask;
+                continue;
+            }
         }
         return bestTask;
     }
@@ -291,8 +327,10 @@ public class DispatchSystem {
 
             Location restaurantLocation = BestTask.getOrder().getRestaurant().getLocation();
             Location riderLocation = BestTask.getRider().getLocation();
-            Double distance = restaurantLocation.distanceTo(riderLocation);
-            Double time = distance/Constants.DELIVERY_SPEED;
+            Location customerLocation = BestTask.getOrder().getCustomer().getLocation();
+            Double distance1 = riderLocation.distanceTo(restaurantLocation);
+            Double distance2 = restaurantLocation.distanceTo(customerLocation);
+            Double time = (distance1+distance2)/Constants.DELIVERY_SPEED;
             BestTask.getOrder().setEstimatedTime(time);
 
             BestTask.getRider().setStatus(Constants.RIDER_DELIVERING);

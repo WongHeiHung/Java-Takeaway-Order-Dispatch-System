@@ -14,11 +14,12 @@ public class RestaurantToCustomerDistanceRank implements PendingOrderRank {
     }
     @Override
     public int compare(Order source, Order target) {
-
-        if(calculateDistance(source) > calculateDistance(target))
+        if(calculateDistance(source) == calculateDistance(target))
+            return 0;
+        else if(calculateDistance(source) > calculateDistance(target))
             return 1;
         else
-            return 0;
+            return -1;
 
     }
 }
