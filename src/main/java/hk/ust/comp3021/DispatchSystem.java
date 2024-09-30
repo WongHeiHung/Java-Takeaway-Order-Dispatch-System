@@ -315,9 +315,9 @@ public class DispatchSystem {
     /// Do not forget to 1. remove the dispatched rider every iteration, 2. change the status of the order and the rider after the order is dispatched, and 3. calculate the estimated time for the order.
     public void dispatchFirstRound() {
         while(true){
-            List<Order> aviliableOrder = getAvailablePendingOrders();
-            if (aviliableOrder.isEmpty()) return;
-            List<Order> rankedOrder = getRankedPendingOrders(aviliableOrder);
+            List<Order> availableOrder = getAvailablePendingOrders();
+            if (availableOrder.isEmpty()) return;
+            List<Order> rankedOrder = getRankedPendingOrders(availableOrder);
             List<Rider> aviliableRider = getAvailableRiders();
             if (aviliableRider.isEmpty()) return;
 
@@ -398,7 +398,13 @@ public class DispatchSystem {
     /// Task 10: Implement the getTimeoutDispatchedOrders() method to get the timeout dispatched orders.
     /// Hint: Do not forget to take the current time stamp into consideration.
     public List<Order> getTimeoutDispatchedOrders() {
-        return null;
+        List<Order> timeoutDispatchedOrders = new ArrayList<>();
+        for (Order order : dispatchedOrders){
+            double totalTime = currentTimestamp - order.getCreateTime() + order.getEstimatedTime();
+            if(totalTime > Constants.DELIVERY_TIME_LIMIT)
+                timeoutDispatchedOrders.add(order);
+        }
+        return timeoutDispatchedOrders;
     }
 
     /// Do not modify the method.
@@ -434,11 +440,11 @@ public class DispatchSystem {
             dispatchSystem.dispatchFirstRound();
 
             dispatchSystem.writeOrders("firstRoundDispatchedOrders.txt", dispatchSystem.dispatchedOrders);
-            /*
+
             List<Order> timeoutOrders = dispatchSystem.getTimeoutDispatchedOrders();
 
             dispatchSystem.writeOrders("timeoutDispatchedOrders.txt", timeoutOrders);
-*/
+
         } catch (IOException exception) {
             exception.printStackTrace();
         }
